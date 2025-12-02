@@ -23,7 +23,7 @@ import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private TextView userNameText, sectionTitle;
+    private TextView userNameText;
     private MaterialButton myBookingsButton, myListingsButton;
     private RecyclerView recyclerView;
     private View emptyState, searchCard;
@@ -52,13 +52,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private void initViews() {
         userNameText = findViewById(R.id.userNameText);
-        TextView userNameText2 = findViewById(R.id.userNameText2);
         myBookingsButton = findViewById(R.id.myBookingsButton);
         myListingsButton = findViewById(R.id.myListingsButton);
         recyclerView = findViewById(R.id.recyclerView);
-        emptyState = findViewById(R.id.emptyState);
         bottomNav = findViewById(R.id.bottomNav);
         searchCard = findViewById(R.id.searchView);
+
+        // emptyState might not exist in layout, check before using
+        emptyState = findViewById(R.id.emptyState);
     }
 
     private void initFirebase() {
@@ -67,38 +68,49 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        myBookingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchToBookingsMode();
-            }
-        });
+        if (myBookingsButton != null) {
+            myBookingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchToBookingsMode();
+                }
+            });
+        }
 
-        myListingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchToListingsMode();
-            }
-        });
+        if (myListingsButton != null) {
+            myListingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchToListingsMode();
+                }
+            });
+        }
 
-        searchCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open search form activity
-                Intent intent = new Intent(HomeActivity.this, SearchFormActivity.class);
-                startActivity(intent);
-            }
-        });
+        if (searchCard != null) {
+            searchCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Open search form activity
+                    Intent intent = new Intent(HomeActivity.this, SearchFormActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
 
-        findViewById(R.id.profileImage).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
-            }
-        });
+        View profileImage = findViewById(R.id.profileImage);
+        if (profileImage != null) {
+            profileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+                }
+            });
+        }
     }
 
     private void setupBottomNav() {
+        if (bottomNav == null) return;
+
         bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -140,11 +152,15 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadUserData() {
-        String userName = prefsHelper.getUserName();
-        userNameText.setText(userName);
+        if (userNameText != null) {
+            String userName = prefsHelper.getUserName();
+            userNameText.setText(userName);
+        }
     }
 
     private void setupRecyclerView() {
+        if (recyclerView == null) return;
+
         rideList = new ArrayList<>();
         adapter = new RideAdapter(this, rideList, new RideAdapter.OnRideClickListener() {
             @Override
@@ -170,24 +186,24 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateModeUI() {
-        if (isBookingsMode) {
-            myBookingsButton.setBackgroundTintList(getColorStateList(R.color.status_active));
-            myBookingsButton.setTextColor(getColor(R.color.white));
-            myListingsButton.setBackgroundTintList(null);
-            myListingsButton.setTextColor(getColor(R.color.primary_blue));
-            sectionTitle.setText(R.string.your_bookings);
-        } else {
-            myListingsButton.setBackgroundTintList(getColorStateList(R.color.status_active));
-            myListingsButton.setTextColor(getColor(R.color.white));
-            myBookingsButton.setBackgroundTintList(null);
-            myBookingsButton.setTextColor(getColor(R.color.primary_blue));
-            sectionTitle.setText(R.string.your_listings);
+        if (myBookingsButton != null && myListingsButton != null) {
+            if (isBookingsMode) {
+                myBookingsButton.setBackgroundTintList(getColorStateList(R.color.status_active));
+                myBookingsButton.setTextColor(getColor(R.color.white));
+                myListingsButton.setBackgroundTintList(null);
+                myListingsButton.setTextColor(getColor(R.color.primary_blue));
+            } else {
+                myListingsButton.setBackgroundTintList(getColorStateList(R.color.status_active));
+                myListingsButton.setTextColor(getColor(R.color.white));
+                myBookingsButton.setBackgroundTintList(null);
+                myBookingsButton.setTextColor(getColor(R.color.primary_blue));
+            }
         }
     }
 
     private void loadRides() {
         String userId = prefsHelper.getUserId();
-        if (userId == null) return;
+        if (userId == null || recyclerView == null || adapter == null) return;
 
         if (isBookingsMode) {
             // My Bookings: Show rides where I'm looking for a ride (rideType = "looking")
@@ -208,12 +224,14 @@ public class HomeActivity extends AppCompatActivity {
 
                             adapter.notifyDataSetChanged();
 
-                            if (rideList.isEmpty()) {
-                                emptyState.setVisibility(View.VISIBLE);
-                                recyclerView.setVisibility(View.GONE);
-                            } else {
-                                emptyState.setVisibility(View.GONE);
-                                recyclerView.setVisibility(View.VISIBLE);
+                            if (emptyState != null && recyclerView != null) {
+                                if (rideList.isEmpty()) {
+                                    emptyState.setVisibility(View.VISIBLE);
+                                    recyclerView.setVisibility(View.GONE);
+                                } else {
+                                    emptyState.setVisibility(View.GONE);
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                }
                             }
                         }
 
@@ -241,12 +259,14 @@ public class HomeActivity extends AppCompatActivity {
 
                             adapter.notifyDataSetChanged();
 
-                            if (rideList.isEmpty()) {
-                                emptyState.setVisibility(View.VISIBLE);
-                                recyclerView.setVisibility(View.GONE);
-                            } else {
-                                emptyState.setVisibility(View.GONE);
-                                recyclerView.setVisibility(View.VISIBLE);
+                            if (emptyState != null && recyclerView != null) {
+                                if (rideList.isEmpty()) {
+                                    emptyState.setVisibility(View.VISIBLE);
+                                    recyclerView.setVisibility(View.GONE);
+                                } else {
+                                    emptyState.setVisibility(View.GONE);
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                }
                             }
                         }
 
