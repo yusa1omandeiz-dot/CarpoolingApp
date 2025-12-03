@@ -22,7 +22,6 @@ public class MessagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_messages);
 
         initViews();
-        setupToolbar();
         setupBottomNav();
         setupRecyclerView();
 
@@ -34,14 +33,6 @@ public class MessagesActivity extends AppCompatActivity {
         messagesRecyclerView = findViewById(R.id.messagesRecyclerView);
         bottomNav = findViewById(R.id.bottomNav);
         emptyState = findViewById(R.id.emptyState);
-    }
-
-    private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Messages");
-        }
     }
 
     private void setupBottomNav() {

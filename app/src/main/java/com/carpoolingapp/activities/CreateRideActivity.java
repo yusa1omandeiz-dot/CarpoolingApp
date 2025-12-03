@@ -131,13 +131,13 @@ public class CreateRideActivity extends AppCompatActivity {
         if (isHostingRide) {
             hostingRideButton.setBackgroundTintList(getColorStateList(R.color.status_active));
             hostingRideButton.setTextColor(getColor(R.color.white));
-            lookingForRideButton.setBackgroundTintList(null);
+            lookingForRideButton.setBackgroundTintList(getColorStateList(R.color.status_inactive));
             lookingForRideButton.setTextColor(getColor(R.color.primary_blue));
             createRideButton.setText("Create Ride");
         } else {
             lookingForRideButton.setBackgroundTintList(getColorStateList(R.color.status_active));
             lookingForRideButton.setTextColor(getColor(R.color.white));
-            hostingRideButton.setBackgroundTintList(null);
+            hostingRideButton.setBackgroundTintList(getColorStateList(R.color.status_inactive));
             hostingRideButton.setTextColor(getColor(R.color.primary_blue));
             createRideButton.setText("Search Rides");
         }

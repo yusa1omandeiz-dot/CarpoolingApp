@@ -7,15 +7,18 @@
     android:background="@color/background_white">
 
     <!-- Toolbar -->
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/white"
-        app:navigationIcon="@drawable/arrow"
-        app:title="Create your ride" />
+        android:layout_height="wrap_content"
+        android:background="@color/background_blue"
+        android:elevation="4dp"
+        android:paddingStart="20dp"
+        android:paddingTop="5dp"
+        app:navigationIcon="@drawable/white_arrow"
+        app:title="Plan your Ride"
+        app:titleTextColor="@color/white" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -56,7 +59,7 @@
                     android:layout_weight="1"
                     android:text="I'm hosting a ride"
                     android:textColor="@color/white"
-                    app:backgroundTint="#9CABC2"
+                    app:backgroundTint="@color/background_blue"
                     app:cornerRadius="20dp" />
 
             </LinearLayout>
